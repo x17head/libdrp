@@ -36,6 +36,8 @@ class Entity
 	
 	public function drawImage(image:Image, x:Float, y:Float,graphics:Graphics)
 	{
+		if (image == null) return;
+		
 		if (rotation != 0) graphics.pushRotation(rotation, 
 		(StageRealX + (x * scaleX)) + (image.width * scaleX) / 2, 
 		(StageRealY + (y * scaleY)) + (image.height * scaleY) / 2

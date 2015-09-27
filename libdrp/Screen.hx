@@ -26,14 +26,12 @@ class Screen
 	
 	public function act(delta:Float)
 	{
-		if(assetsLoaded)
-		for (View in views) View.act(delta);
+		if(assetsLoaded)for (View in views) View.act(delta);
 	}
 	
 	public function draw(graphics:Graphics)
 	{
-		if(assetsLoaded)
-		for (View in views) View.draw(graphics);
+		if(assetsLoaded)for (View in views) View.draw(graphics);
 	}
 	
 	public function loadAssets(name:String)

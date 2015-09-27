@@ -21,19 +21,12 @@ class DrpGame extends Game
 {
 
 	var backbuffer:Image;
-	var loaded = false;
 	var delta:Float;
 	var lastFrameDeltaTime:Float;
 	var graphics:Graphics;
 	var game:Drp;
 	
 	override function init(): Void {
-		Configuration.setScreen(new LoadingScreen());
-		Loaded();
-	}
-	
-	private function Loaded() {
-		loaded = true;
 		backbuffer = Image.createRenderTarget(width, height);
 		deltaSetup();
 		game = new Drp();
@@ -60,8 +53,6 @@ class DrpGame extends Game
 	
 	override function render(frame: Framebuffer): Void 
 	{	
-		if (!loaded) return;
-		
 		graphics = backbuffer.g2; 
 		graphics.begin();
 		graphics.clear(Color.Black);
@@ -77,13 +68,11 @@ class DrpGame extends Game
 		endRender(frame); 
 	}
 	
-	//override this
 	function draw(graphics:Graphics)
 	{
 		game.get().currentScreen.draw(graphics);
 	}
 	
-	//override this
 	function act(delta:Float)
 	{
 		game.get().currentScreen.act(delta);
@@ -91,7 +80,6 @@ class DrpGame extends Game
 	
 	override function update()
 	{
-		if (!loaded) return;
 		deltaUpdate();
 		act(delta);
 	}
