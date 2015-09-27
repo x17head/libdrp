@@ -34,6 +34,11 @@ class Entity
 		
 	}
 	
+	public function load()
+	{
+		
+	}
+	
 	public function drawImage(image:Image, x:Float, y:Float,graphics:Graphics)
 	{
 		if (image == null) return;

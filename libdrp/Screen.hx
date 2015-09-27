@@ -41,7 +41,8 @@ class Screen
 	
 	public function assetsLoadedCallback()
 	{
-		assetsLoaded = true;		
+		assetsLoaded = true;
+		for (View in views) View.load();
 	}
 	
 	public function unloadAssets()
