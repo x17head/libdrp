@@ -5,7 +5,7 @@ import kha.graphics2.Graphics;
 import kha.Image;
 import libdrp.ViewProperties;
 
-import TestActor;
+import TestEntity;
 /**
  * ...
  * @author Nate Edwards
