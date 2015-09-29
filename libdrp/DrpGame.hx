@@ -24,12 +24,10 @@ class DrpGame extends Game
 	var delta:Float;
 	var lastFrameDeltaTime:Float;
 	var graphics:Graphics;
-	var game:Drp;
 	
 	override function init(): Void {
 		backbuffer = Image.createRenderTarget(width, height);
 		deltaSetup();
-		game = new Drp();
 		setup();
 		Configuration.setScreen(this);
 	}
@@ -70,12 +68,12 @@ class DrpGame extends Game
 	
 	function draw(graphics:Graphics)
 	{
-		game.get().currentScreen.draw(graphics);
+		Drp.get().currentScene.draw(graphics);
 	}
 	
 	function act(delta:Float)
 	{
-		game.get().currentScreen.act(delta);
+		Drp.get().currentScene.act(delta);
 	}
 	
 	override function update()

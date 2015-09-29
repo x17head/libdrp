@@ -1,6 +1,6 @@
 package libdrp;
 
-import libdrp.Screen;
+import libdrp.Scene;
 
 /**
  * ...
@@ -8,33 +8,33 @@ import libdrp.Screen;
  */
 class Drp
 {
-	var screens:Map<String,Screen>;
+	var scenes:Map<String,Scene>;
 	
 	public static var __instance:libdrp.Drp;
 	
-	public var currentScreen:Screen;
+	public var currentScene:Scene;
 	
 	public function new() 
 	{
-		screens = new Map<String,Screen>();
+		scenes = new Map<String,Scene>();
 	}
 	
-	public function get():Drp
+	public static function get():Drp
 	{
 		if (Drp.__instance == null)
             Drp.__instance = new Drp();
         return Drp.__instance;
 	}
 	
-	public function addScreen(name:String,screen:Screen)
+	public function addScene(name:String,screen:Scene)
 	{
-		screens.set(name, screen);
+		scenes.set(name, screen);
 	}
 	
-	public function setScreen(name:String)
+	public function setScene(name:String)
 	{
-		if (currentScreen != null) currentScreen.unloadAssets();
-		currentScreen = screens.get(name);
+		if (currentScene != null) currentScene.unloadAssets();
+		currentScene = scenes.get(name);
 	}
 	
 }
