@@ -16,18 +16,18 @@ class View
 		
 	var entitys : Array<Entity>;
 	
-	public function new(RealXin:Int, RealYin:Int, RealWidthin:Int, RealHeightin:Int, VirtualWidthin:Int, VirtualHeightin:Int)
+	public function new(RealX_in:Int, RealY_in:Int, RealWidth_in:Int, RealHeight_in:Int, VirtualWidth_in:Int, VirtualHeight_in:Int)
 	{		
 		
 		var viewPropertiesTEST:ViewProperties = { 
-			RealX:RealXin,
-			RealY:RealYin,
-			RealWidth:RealWidthin,
-			RealHeight:RealHeightin,
-			VirtualWidth:VirtualWidthin,
-			VirtualHeight:VirtualHeightin,
-			scaleX:RealWidthin/ VirtualWidthin,
-			scaleY:RealHeightin / VirtualHeightin 
+			RealX:RealX_in,
+			RealY:RealY_in,
+			RealWidth:RealWidth_in,
+			RealHeight:RealHeight_in,
+			VirtualWidth:VirtualWidth_in,
+			VirtualHeight:VirtualHeight_in,
+			scaleX:RealWidth_in/ VirtualWidth_in,
+			scaleY:RealHeight_in / VirtualHeight_in 
 			};
 			
 		viewProperties = viewPropertiesTEST;
@@ -36,10 +36,10 @@ class View
 		
 	}
 	
-	public function act(delta:Float):Void
+	public function update(delta:Float):Void
 	{
 		//update all Actors
-		for (Entity in entitys) Entity.act(delta);
+		for (Entity in entitys) Entity.update(delta);
 	}
 	
 	public function draw(graphics:Graphics):Void
@@ -50,8 +50,8 @@ class View
 	
 	public function addEntity(entity: Entity) { 
 		entitys.push(entity);
-		entity.StageRealX = viewProperties.RealX;
-		entity.StageRealY = viewProperties.RealY;
+		entity.ViewRealX = viewProperties.RealX;
+		entity.ViewRealY = viewProperties.RealY;
 		entity.scaleX = viewProperties.scaleX;
 		entity.scaleY = viewProperties.scaleY;
  	} 

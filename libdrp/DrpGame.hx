@@ -25,9 +25,14 @@ class DrpGame extends Game
 	var lastFrameDeltaTime:Float;
 	var graphics:Graphics;
 	
+	//fps stuff
+	private var FPS_totalFrames:Int = 0;
+	private var FPS_elapsedTime:Float = 0;
+	public var fps:Int = 0;
+	private var FPS_previousTime:Float = 0;	
+	
 	override function init(): Void {
 		backbuffer = Image.createRenderTarget(width, height);
-		deltaSetup();
 		setup();
 		Configuration.setScreen(this);
 	}
@@ -38,15 +43,19 @@ class DrpGame extends Game
 		
 	}
 	
-	function deltaSetup()
-	{
-		lastFrameDeltaTime = Scheduler.time();
-	}
-	
 	function deltaUpdate()
 	{
-		delta = Scheduler.time() - lastFrameDeltaTime;
-		lastFrameDeltaTime = Scheduler.time();
+		var currentTime:Float = Scheduler.time();
+		delta = (currentTime - FPS_previousTime);
+		FPS_previousTime = currentTime;
+		
+        FPS_elapsedTime += delta;		
+		if (FPS_elapsedTime >= 1.0) {
+			fps = FPS_totalFrames;
+			FPS_totalFrames = 0;
+			FPS_elapsedTime = 0;
+			trace(fps);
+		}
 	}
 	
 	override function render(frame: Framebuffer): Void 
@@ -63,7 +72,9 @@ class DrpGame extends Game
 		 		 
 		startRender(frame);
 		Scaler.scale(backbuffer, frame, kha.Sys.screenRotation);
-		endRender(frame); 
+		endRender(frame);
+		//fps
+		FPS_totalFrames++;
 	}
 	
 	function draw(graphics:Graphics)
@@ -71,14 +82,9 @@ class DrpGame extends Game
 		Drp.get().currentScene.draw(graphics);
 	}
 	
-	function act(delta:Float)
-	{
-		Drp.get().currentScene.act(delta);
-	}
-	
 	override function update()
 	{
 		deltaUpdate();
-		act(delta);
+		Drp.get().currentScene.update(delta);
 	}
 }
