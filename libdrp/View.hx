@@ -3,7 +3,7 @@ package libdrp;
 import kha.Game;
 import kha.graphics2.Graphics;
 import kha.Image;
-import libdrp.ViewProperties;
+import libdrp.View.ViewProperties;
 
 /**
  * ...
@@ -16,20 +16,21 @@ class View
 		
 	var entitys : Array<Entity>;
 	
-	public function new(RealX:Int, RealY:Int, RealWidth:Int, RealHeight:Int, VirtualWidth:Int, VirtualHeight:Int)
+	public function new(RealXin:Int, RealYin:Int, RealWidthin:Int, RealHeightin:Int, VirtualWidthin:Int, VirtualHeightin:Int)
 	{		
-		viewProperties =  new ViewProperties();
 		
-		viewProperties.RealX = RealX;
-		viewProperties.RealY = RealY;
-		viewProperties.RealWidth = RealWidth;
-		viewProperties.RealHeight = RealHeight;
-		
-		viewProperties.VirtualWidth = VirtualWidth;
-		viewProperties.VirtualHeight = VirtualHeight;
-		
-		viewProperties.scaleX = RealWidth/ VirtualWidth;
-		viewProperties.scaleY = RealHeight / VirtualHeight;
+		var viewPropertiesTEST:ViewProperties = { 
+			RealX:RealXin,
+			RealY:RealYin,
+			RealWidth:RealWidthin,
+			RealHeight:RealHeightin,
+			VirtualWidth:VirtualWidthin,
+			VirtualHeight:VirtualHeightin,
+			scaleX:RealWidthin/ VirtualWidthin,
+			scaleY:RealHeightin / VirtualHeightin 
+			};
+			
+		viewProperties = viewPropertiesTEST;
 		
 		entitys = new Array<Entity>();
 		
@@ -60,4 +61,16 @@ class View
 		for (Entity in entitys) Entity.load();
 	}
 	
+}
+
+typedef ViewProperties =
+{
+	RealX:Int,
+	RealY:Int,
+	RealWidth:Int,
+	RealHeight:Int,
+	VirtualWidth:Int,
+	VirtualHeight:Int,
+	scaleX:Float,
+	scaleY:Float
 }

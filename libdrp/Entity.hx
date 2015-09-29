@@ -1,5 +1,6 @@
 package libdrp;
 
+import flash.accessibility.Accessibility;
 import kha.graphics2.Graphics;
 import kha.Image;
 
@@ -10,13 +11,21 @@ import kha.Image;
  */
 class Entity
 {
+	//render vars
 	public var scaleX:Float = 1;
 	public var scaleY:Float = 1;
-	
 	public var StageRealX:Int = 0;
 	public var StageRealY:Int = 0;
+	public var x:Float = 0;
+	public var y:Float = 0;
+	public var z:Float = 0; //not used...yet
 	
+	public var width:Float = 0;
+	public var height:Float = 0;
 	public var rotation:Float = 0;
+	
+	public var clickable:Bool = false;
+	public var touchable:Bool = false;
 	
 	//todo add render "depths" (levels?) so that blank filler gets rendered last, and cus its just usefull
 	

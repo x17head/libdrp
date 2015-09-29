@@ -1,6 +1,7 @@
 package libdrp.input;
 
 import kha.input.Mouse;
+import libdrp.ViewProperties;
 
 /**
  * ...
