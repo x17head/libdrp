@@ -2,7 +2,9 @@ package libdrp;
 
 import kha.graphics2.Graphics;
 import kha.Image;
+import kha.audio1.Audio;
 import libdrp.View.ViewProperties;
+import kha.Loader;
 
 /**
  * ...
@@ -39,25 +41,43 @@ class Entity
 		
 	}
 	
-	public function load()
+	//sound stuff
+	
+	public function playSound(sound:String)
 	{
+		var snd = Loader.the.getSound(sound);
 		
+		if (snd == null) return;
+		
+		Audio.playSound(snd);
 	}
 	
-	public function drawImage(image:Image, x:Float, y:Float,graphics:Graphics)
+	public function playMusic(music:String)
 	{
-		if (image == null) return;
+		var mus = Loader.the.getMusic(music);
+		
+		if (mus == null) return;
+		
+		Audio.playMusic(mus);
+	}
+	
+	//draw stuff
+	public function drawImage(image:String, x:Float, y:Float,graphics:Graphics)
+	{
+		var img = Loader.the.getImage(image);
+		
+		if (img == null) return;
 		
 		if (rotation != 0) graphics.pushRotation(rotation, 
-		(ViewRealX + (x * scaleX)) + (image.width * scaleX) / 2, 
-		(ViewRealY + (y * scaleY)) + (image.height * scaleY) / 2
+		(ViewRealX + (x * scaleX)) + (img.width * scaleX) / 2, 
+		(ViewRealY + (y * scaleY)) + (img.height * scaleY) / 2
 		);
 		
-		graphics.drawScaledImage(image, 
+		graphics.drawScaledImage(img,
 						ViewRealX + (x * scaleX), 
 						ViewRealY + (y * scaleY), 
-						image.width * scaleX, 
-						image.height * scaleY
+						img.width * scaleX, 
+						img.height * scaleY
 						);
 						
 		if (rotation != 0)graphics.popTransformation();

@@ -56,11 +56,6 @@ class View
 		entity.scaleY = viewProperties.scaleY;
  	} 
 	
-	public function load()
-	{
-		for (Entity in entitys) Entity.load();
-	}
-	
 }
 
 typedef ViewProperties =

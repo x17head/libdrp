@@ -45,10 +45,10 @@ class Drp
 		touchX = new Vector(10);
 		touchY = new Vector(10);
 		__touch = Surface.get(0);
-		__touch.notify(touchDown, touchUp, touchMove);
+		if(__touch != null)__touch.notify(touchDown, touchUp, touchMove);
 		//setup mouse
 		__mouse = kha.input.Mouse.get(0);
-		__mouse.notify(mouseDown, mouseUp, mouseMove, mouseWheel);
+		if(__mouse != null)__mouse.notify(mouseDown, mouseUp, mouseMove, mouseWheel);
 		mouseButton = new Vector(maxMouseButtons);
 		for ( i in 0...mouseButton.length)
 		{
