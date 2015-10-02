@@ -12,30 +12,38 @@ import kha.Loader;
  */
 class Entity
 {
+	public var name:String;
+	public var active:Bool = false;
+	public var alive:Bool = false;
 	//render vars
-	public var scaleX:Float = 1;
-	public var scaleY:Float = 1;
-	public var ViewRealX:Int = 0;
-	public var ViewRealY:Int = 0;
 	public var x:Float = 0;
 	public var y:Float = 0;
 	public var z:Float = 0; //not used...yet
 	
 	public var width:Float = 0;
 	public var height:Float = 0;
+	public var radius:Float = 0;
 	public var rotation:Float = 0;
+	
+	private var view:View;
 	
 	//todo add render "depths" (levels?) so that blank filler gets rendered last, and cus its just usefull
 	
 	public function new()
 	{	
+		
 	}
-	
+	//internal use only
+	public function setView(view:View)
+	{
+		this.view = view;
+	}
+	//override this
 	public function update(delta:Float)
 	{
 		
 	}
-	
+	//override this
 	public function draw(graphics:Graphics)
 	{
 		
@@ -69,15 +77,15 @@ class Entity
 		if (img == null) return;
 		
 		if (rotation != 0) graphics.pushRotation(rotation, 
-		(ViewRealX + (x * scaleX)) + (img.width * scaleX) / 2, 
-		(ViewRealY + (y * scaleY)) + (img.height * scaleY) / 2
+		(view.viewProperties.RealX + (x * view.viewProperties.scaleX)) + (img.width * view.viewProperties.scaleX) / 2, 
+		(view.viewProperties.RealY + (y * view.viewProperties.scaleY)) + (img.height * view.viewProperties.scaleY) / 2
 		);
 		
 		graphics.drawScaledImage(img,
-						ViewRealX + (x * scaleX), 
-						ViewRealY + (y * scaleY), 
-						img.width * scaleX, 
-						img.height * scaleY
+						view.viewProperties.RealX + (x * view.viewProperties.scaleX), 
+						view.viewProperties.RealY + (y * view.viewProperties.scaleY), 
+						img.width * view.viewProperties.scaleX, 
+						img.height * view.viewProperties.scaleY
 						);
 						
 		if (rotation != 0)graphics.popTransformation();
@@ -86,12 +94,24 @@ class Entity
 	//<mouse stuff>
 	public function MouseX():Int
 	{
-		return Std.int( (Drp.get().mouseX - ViewRealX) / scaleX);
+		return Std.int( (Drp.get().mouseX - view.viewProperties.RealX) / view.viewProperties.scaleX);
 	}
 	
 	public function MouseY():Int
 	{
-		return Std.int( (Drp.get().mouseY - ViewRealY) / scaleY);
+		return Std.int( (Drp.get().mouseY - view.viewProperties.RealY) / view.viewProperties.scaleY);
 	}
 	//</mouse stuff>
+	
+	//<circle collision>
+	private function circleCollision(x1:Float, y1:Float, radius1:Float, x2:Float, y2:Float, radius2:Float):Bool
+	{
+    //compare the distance to combined radii
+    var dx = x2 - x1;
+    var dy = y2 - y1;
+    var radii = radius1 + radius2;
+    if ( ( dx * dx )  + ( dy * dy ) < radii * radii ) return true;
+    else return false;
+	}
+	
 }

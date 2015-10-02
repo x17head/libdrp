@@ -14,7 +14,7 @@ class View
 {
 	public var viewProperties:ViewProperties;
 		
-	var entitys : Array<Entity>;
+	public var entitys : Array<Entity>;
 	
 	public function new(RealX_in:Int, RealY_in:Int, RealWidth_in:Int, RealHeight_in:Int, VirtualWidth_in:Int, VirtualHeight_in:Int)
 	{		
@@ -50,10 +50,7 @@ class View
 	
 	public function addEntity(entity: Entity) { 
 		entitys.push(entity);
-		entity.ViewRealX = viewProperties.RealX;
-		entity.ViewRealY = viewProperties.RealY;
-		entity.scaleX = viewProperties.scaleX;
-		entity.scaleY = viewProperties.scaleY;
+		entity.setView(this);
  	} 
 	
 }
