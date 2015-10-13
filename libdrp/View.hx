@@ -39,19 +39,43 @@ class View
 	public function update(delta:Float):Void
 	{
 		//update all Actors
-		for (Entity in entitys) Entity.update(delta);
+		for (Entity in entitys)
+		{
+			Entity.update(delta);
+		}
 	}
 	
-	public function draw(graphics:Graphics):Void
+	public function draw():Void
 	{
-		//render all Actors
-		for (Entity in entitys) Entity.draw(graphics);
+		//render all
+		for (Entity in entitys)
+		{
+			 Entity.draw();
+		}
 	}
 	
 	public function addEntity(entity: Entity) { 
 		entitys.push(entity);
-		entity.setView(this);
+		entity.addView(this);
  	} 
+	
+	public function getEntity(name:String):Dynamic
+	{
+		//find a the entity and return it...
+		for ( i in 0...entitys.length)
+			{
+				if (entitys[i].name == name)
+				{
+					return entitys[i];
+				}
+				
+			}
+			
+		//otherwise bad stuff happens
+		
+		return null;
+		
+	}
 	
 }
 

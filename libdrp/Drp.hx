@@ -1,10 +1,16 @@
 package libdrp;
 
 import haxe.ds.Vector;
+import kha.arrays.Float32Array;
+import kha.graphics2.Graphics;
+import kha.Image;
+import kha.input.Keyboard;
+import kha.Key;
 import libdrp.Scene;
 import kha.input.Mouse;
 import kha.input.Gamepad;
 import kha.input.Surface;
+import kha.Loader;
 
 /**
  * ...
@@ -22,6 +28,10 @@ class Drp
 	public var touchX:Vector<Int>;
 	public var touchY:Vector<Int>;
 	
+	//keyboard var
+	public var keyboardMap:Map<String,String>;
+	public var __keyboard:Keyboard;
+	
 	//mouse vars
 	private var __mouse:kha.input.Mouse;
 	public var mouseX:Int = 0;
@@ -34,6 +44,16 @@ class Drp
 	public var gamepad:Vector < Gamepad>;
 	public var controllers:Vector<Controller>;
 	
+	//draw z var
+	var drawListImage:Array<Image>;
+	var drawListX:Array<Float>;
+	var drawListY:Array<Float>;
+	var drawListZ:Array<Float>;
+	var drawListW:Array<Float>;
+	var drawListH:Array<Float>;
+	var drawListR:Array<Float>;
+	var drawListCount:Int = 0;
+	
 	public var currentScene:Scene;
 	
 	public function new() 
@@ -45,19 +65,39 @@ class Drp
 		touchX = new Vector(10);
 		touchY = new Vector(10);
 		__touch = Surface.get(0);
-		if(__touch != null)__touch.notify(touchDown, touchUp, touchMove);
+		if (__touch != null)__touch.notify(touchDown, touchUp, touchMove);
 		//setup mouse
 		__mouse = kha.input.Mouse.get(0);
-		if(__mouse != null)__mouse.notify(mouseDown, mouseUp, mouseMove, mouseWheel);
-		mouseButton = new Vector(maxMouseButtons);
-		for ( i in 0...mouseButton.length)
+		if (__mouse != null)
 		{
-			mouseButton[i] = false;
+			__mouse.notify(mouseDown, mouseUp, mouseMove, mouseWheel);
+			mouseButton = new Vector(maxMouseButtons);
+			for ( i in 0...mouseButton.length)
+			{
+				mouseButton[i] = false;
+			}
 		}
 		//setup gamepads
 		gamepad = new Vector(4);
 		controllers = new Vector(4);		
 		refreshControllers();
+		
+		//setup keyboard
+		keyboardMap = new Map();
+		__keyboard = Keyboard.get(0);
+		if (__keyboard != null)
+		{
+			__keyboard.notify(keyboardDown, keyboardUp);
+		}
+		
+		//setup draw lists
+		drawListImage = new Array<Image>();
+		drawListX = new Array<Float>();
+		drawListY = new Array<Float>();
+		drawListZ = new Array<Float>();
+		drawListW = new Array<Float>();
+		drawListH = new Array<Float>();
+		drawListR = new Array<Float>();
 	}
 	
 	//singlton stuff
@@ -142,6 +182,67 @@ class Drp
 		touchX[touchNum] = x;
 		touchY[touchNum] = y;
 	}
+	//</touch stuff>
+	
+	//<keyboard stuff>
+	public function keyboardDown(key:Key, string:String)
+	{
+		keyboardMap.set(string, string);
+	}
+	
+	public function keyboardUp(key:Key, string:String)
+	{
+		keyboardMap.remove(string);
+	}
+	
+	public function keyboardKey(string:String)
+	{
+		return keyboardMap.exists(string);
+	}
+	
+	public function drawCallOrdered(image:Image,x:Float,y:Float,z:Float = 0,w:Float = 1,h:Float = 1,r:Float = 0)
+	{
+		drawListImage[drawListCount] = image;
+		drawListX[drawListCount] = x;
+		drawListY[drawListCount] = y;
+		drawListZ[drawListCount] = z;
+		drawListW[drawListCount] = w;
+		drawListH[drawListCount] = h;
+		drawListR[drawListCount] = r;
+		drawListCount++;
+	}
+	
+	public function drawOrdered(graphics:Graphics)
+	{
+		var numberDrawn:Int = 0;
+		var currentZ:Int = 0;
+		while (numberDrawn < drawListCount)
+		{
+			for ( i in 0...drawListCount)
+			{
+				if (drawListZ[i] == currentZ)
+				{
+					if (drawListR[i] != 0) graphics.pushRotation(drawListR[i], 
+						drawListX[i] + drawListW[i] / 2, 
+						drawListY[i] + drawListH[i] / 2
+						);
+		
+					graphics.drawScaledImage(drawListImage[i], 
+						drawListX[i], 
+						drawListY[i], 
+						drawListW[i], 
+						drawListH[i]
+						);
+						
+					if (drawListR[i] != 0)graphics.popTransformation();
+					numberDrawn++;
+				}
+			}
+			currentZ++;
+		}
+		drawListCount = 0;
+	}
+	
 }
 
 class Controller

@@ -9,8 +9,6 @@ import kha.Loader;
  */
 class Scene
 {
-
-	var assetsLoaded:Bool = false;
 	
 	var views:Array<View>;
 	
@@ -26,22 +24,22 @@ class Scene
 	
 	public function update(delta:Float)
 	{
-		if(assetsLoaded)for (View in views) View.update(delta);
+		for (View in views) View.update(delta);
 	}
 	
-	public function draw(graphics:Graphics)
+	public function draw()
 	{
-		if(assetsLoaded)for (View in views) View.draw(graphics);
+		for (View in views) View.draw();
 	}
 	
 	public function loadAssets(name:String)
 	{
-		Loader.the.loadRoom(name, assetsLoadedCallback);
+		Loader.the.loadRoom(name, setup);
 	}
 	
-	public function assetsLoadedCallback()
+	public function setup()
 	{
-		assetsLoaded = true;
+		
 	}
 	
 	public function unloadAssets()

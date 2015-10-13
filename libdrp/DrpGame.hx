@@ -60,13 +60,15 @@ class DrpGame extends Game
 	
 	override function render(frame: Framebuffer): Void 
 	{	
+		draw();
+		
 		graphics = backbuffer.g2; 
 		graphics.begin();
 		graphics.clear(Color.Black);
 		
 		graphics.transformation = FastMatrix3.identity();
 		
-		draw(graphics);
+		Drp.get().drawOrdered(graphics);
 		
 		graphics.end(); 
 		 		 
@@ -77,9 +79,9 @@ class DrpGame extends Game
 		FPS_totalFrames++;
 	}
 	
-	function draw(graphics:Graphics)
+	function draw()
 	{
-		Drp.get().currentScene.draw(graphics);
+		Drp.get().currentScene.draw();
 	}
 	
 	override function update()

@@ -2,9 +2,9 @@ package libdrp;
 
 import kha.graphics2.Graphics;
 import kha.Image;
-import kha.audio1.Audio;
 import libdrp.View.ViewProperties;
 import kha.Loader;
+import kha.audio1.Audio;
 
 /**
  * ...
@@ -12,45 +12,65 @@ import kha.Loader;
  */
 class Entity
 {
+	//object pooling
 	public var name:String;
+	
 	public var active:Bool = false;
-	public var alive:Bool = false;
-	//render vars
+	
+	//collision
 	public var x:Float = 0;
 	public var y:Float = 0;
-	public var z:Float = 0; //not used...yet
-	
 	public var width:Float = 0;
 	public var height:Float = 0;
-	public var radius:Float = 0;
-	public var rotation:Float = 0;
 	
 	private var view:View;
-	
-	//todo add render "depths" (levels?) so that blank filler gets rendered last, and cus its just usefull
-	
+		
 	public function new()
 	{	
-		
 	}
-	//internal use only
-	public function setView(view:View)
-	{
-		this.view = view;
-	}
-	//override this
+	
 	public function update(delta:Float)
 	{
 		
 	}
-	//override this
-	public function draw(graphics:Graphics)
+	
+	public function draw()
 	{
 		
 	}
 	
-	//sound stuff
+	public function pool(input:Array<Dynamic>)
+	{
+		active = true;
+	}
 	
+	public function addView(view:View)
+	{
+		this.view = view;
+	}
+	
+	public function kill()
+	{
+		active = false;
+	}
+	
+	public function drawImage(image:Image,x:Float,y:Float,z:Float = 0,w:Float = 1,h:Float = 1,r:Float = 0)
+	{
+		
+		if (image != null)
+		{
+			Drp.get().drawCallOrdered(image,
+						view.viewProperties.RealX + (x * view.viewProperties.scaleX), 
+						view.viewProperties.RealY + (y * view.viewProperties.scaleY),
+						z,
+						image.width * view.viewProperties.scaleX * w, 
+						image.height * view.viewProperties.scaleY * h,
+						r);
+		}
+		
+	}
+	
+	//sound stuff
 	public function playSound(sound:String)
 	{
 		var snd = Loader.the.getSound(sound);
@@ -69,28 +89,6 @@ class Entity
 		Audio.playMusic(mus);
 	}
 	
-	//draw stuff
-	public function drawImage(image:String, x:Float, y:Float,graphics:Graphics)
-	{
-		var img = Loader.the.getImage(image);
-		
-		if (img == null) return;
-		
-		if (rotation != 0) graphics.pushRotation(rotation, 
-		(view.viewProperties.RealX + (x * view.viewProperties.scaleX)) + (img.width * view.viewProperties.scaleX) / 2, 
-		(view.viewProperties.RealY + (y * view.viewProperties.scaleY)) + (img.height * view.viewProperties.scaleY) / 2
-		);
-		
-		graphics.drawScaledImage(img,
-						view.viewProperties.RealX + (x * view.viewProperties.scaleX), 
-						view.viewProperties.RealY + (y * view.viewProperties.scaleY), 
-						img.width * view.viewProperties.scaleX, 
-						img.height * view.viewProperties.scaleY
-						);
-						
-		if (rotation != 0)graphics.popTransformation();
-	}
-	
 	//<mouse stuff>
 	public function MouseX():Int
 	{
@@ -101,17 +99,40 @@ class Entity
 	{
 		return Std.int( (Drp.get().mouseY - view.viewProperties.RealY) / view.viewProperties.scaleY);
 	}
+	public function MouseButton(button:Int):Bool
+	{
+		return Drp.get().mouseButton[button];
+	}
 	//</mouse stuff>
 	
-	//<circle collision>
 	private function circleCollision(x1:Float, y1:Float, radius1:Float, x2:Float, y2:Float, radius2:Float):Bool
 	{
-    //compare the distance to combined radii
-    var dx = x2 - x1;
-    var dy = y2 - y1;
-    var radii = radius1 + radius2;
-    if ( ( dx * dx )  + ( dy * dy ) < radii * radii ) return true;
-    else return false;
+		var dx = x2 - x1;
+		var dy = y2 - y1;
+		var radii = radius1 + radius2;
+		if ( ( dx * dx )  + ( dy * dy ) < radii * radii ){
+        return true;
+    }
+		else{return false;}
 	}
 	
+	public function getX():Float
+	{
+		return x;
+	}
+	
+	public function getY():Float
+	{
+		return y;
+	}
+	
+	public function getWidth():Float
+	{
+		return width;
+	}
+	
+	public function getHeight():Float
+	{
+		return height;
+	}
 }
