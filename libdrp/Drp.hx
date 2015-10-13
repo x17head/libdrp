@@ -136,7 +136,7 @@ class Drp
 		mouseY = y;
 	}
 	
-	private function mouseMove(x:Int, y:Int)
+	private function mouseMove(x:Int, y:Int,xMovement:Int,yMovement:Int)
 	{
 		mouseX = x;
 		mouseY = y;
@@ -226,13 +226,13 @@ class Drp
 						drawListX[i] + drawListW[i] / 2, 
 						drawListY[i] + drawListH[i] / 2
 						);
-		
+
 					graphics.drawScaledImage(drawListImage[i], 
-						drawListX[i], 
-						drawListY[i], 
-						drawListW[i], 
-						drawListH[i]
-						);
+					drawListX[i], 
+					drawListY[i], 
+					drawListW[i], 
+					drawListH[i]
+					);
 						
 					if (drawListR[i] != 0)graphics.popTransformation();
 					numberDrawn++;

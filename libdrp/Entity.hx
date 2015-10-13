@@ -56,16 +56,15 @@ class Entity
 	
 	public function drawImage(image:Image,x:Float,y:Float,z:Float = 0,w:Float = 1,h:Float = 1,r:Float = 0)
 	{
-		
 		if (image != null)
 		{
-			Drp.get().drawCallOrdered(image,
-						view.viewProperties.RealX + (x * view.viewProperties.scaleX), 
-						view.viewProperties.RealY + (y * view.viewProperties.scaleY),
-						z,
-						image.width * view.viewProperties.scaleX * w, 
-						image.height * view.viewProperties.scaleY * h,
-						r);
+		Drp.get().drawCallOrdered(image,
+					view.viewProperties.RealX + (x * view.viewProperties.scaleX), 
+					view.viewProperties.RealY + (y * view.viewProperties.scaleY),
+					z,
+					image.width * view.viewProperties.scaleX * w, 
+					image.height * view.viewProperties.scaleY * h,
+					r);
 		}
 		
 	}
