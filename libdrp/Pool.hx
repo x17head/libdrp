@@ -11,7 +11,8 @@ class Pool extends Entity
 	var total:Int;
 	var type:Class<Entity>;
 	var poolOfEntitys:Array<Dynamic>;
-	
+	//pool object must be named so they can be got through view.getEntity()
+	//the total is final
 	public function new(name:String,type:Class<Entity>,total:Int) 
 	{
 		super();
@@ -27,7 +28,7 @@ class Pool extends Entity
 		super.addView(view);
 		for (i in 0...poolOfEntitys.length) poolOfEntitys[i].addView(view);
 	}
-	
+	//find the first avaiable entity and activates it, if none are available it does nothing
 	public function add(input:Array<Dynamic>)
 	{
 		for (i in 0...poolOfEntitys.length) 
@@ -39,7 +40,7 @@ class Pool extends Entity
 			}
 		}
 	}
-	
+	//returns an array of active entities
 	public function getActive():Array<Entity>
 	{
 		var active = new Array<Entity>();
@@ -50,12 +51,12 @@ class Pool extends Entity
 		}
 		return active;
 	}
-	
+	//update active entities in the pool
 	override public function update(delta:Float) 
 	{
 		for (i in 0...poolOfEntitys.length) if(poolOfEntitys[i].active) poolOfEntitys[i].update(delta);
 	}
-	
+	//draw active entities in the pool
 	override public function draw() 
 	{
 		for (i in 0...poolOfEntitys.length) if(poolOfEntitys[i].active) poolOfEntitys[i].draw();

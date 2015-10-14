@@ -12,16 +12,16 @@ import kha.audio1.Audio;
  */
 class Entity
 {
-	//object pooling
-	public var name:String;
-	
-	public var active:Bool = false;
+	//not used in pools
+	private var name:String;
+	//only used in pools
+	private var active:Bool = false;
 	
 	//collision
-	public var x:Float = 0;
-	public var y:Float = 0;
-	public var width:Float = 0;
-	public var height:Float = 0;
+	private var x:Float = 0;
+	private var y:Float = 0;
+	private var width:Float = 0;
+	private var height:Float = 0;
 	
 	private var view:View;
 		
@@ -29,31 +29,34 @@ class Entity
 	{	
 	}
 	
+	//override this
 	public function update(delta:Float)
 	{
 		
 	}
-	
+	//override this
 	public function draw()
 	{
 		
 	}
-	
+	//if the object is "poolable" override this
 	public function pool(input:Array<Dynamic>)
 	{
 		active = true;
 	}
-	
+	//allows access to other entities and viewProperties
 	public function addView(view:View)
 	{
 		this.view = view;
 	}
 	
+	//de-activate a pool object
 	public function kill()
 	{
 		active = false;
 	}
 	
+	//pass draw call to Drp draw stack
 	public function drawImage(image:Image,x:Float,y:Float,z:Float = 0,w:Float = 1,h:Float = 1,r:Float = 0)
 	{
 		if (image != null)
@@ -89,6 +92,8 @@ class Entity
 	}
 	
 	//<mouse stuff>
+	
+	//converts mouse from world coordinates to view coordinates
 	public function MouseX():Int
 	{
 		return Std.int( (Drp.get().mouseX - view.viewProperties.RealX) / view.viewProperties.scaleX);
@@ -133,5 +138,15 @@ class Entity
 	public function getHeight():Float
 	{
 		return height;
+	}
+	
+	public function getName():String
+	{
+		return name;
+	}
+	
+	public function isActive():Bool
+	{
+		return active;
 	}
 }

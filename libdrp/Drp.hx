@@ -199,8 +199,10 @@ class Drp
 	{
 		return keyboardMap.exists(string);
 	}
+	//<batched draw call stuff>
 	
-	public function drawCallOrdered(image:Image,x:Float,y:Float,z:Float = 0,w:Float = 1,h:Float = 1,r:Float = 0)
+	//adds draw call to the draw stack
+	public function drawCallOrdered(image:Image,x:Float,y:Float,z:Float,w:Float,h:Float,r:Float)
 	{
 		drawListImage[drawListCount] = image;
 		drawListX[drawListCount] = x;
@@ -212,6 +214,7 @@ class Drp
 		drawListCount++;
 	}
 	
+	//executes draw calls in desired order
 	public function drawOrdered(graphics:Graphics)
 	{
 		var numberDrawn:Int = 0;
@@ -244,7 +247,7 @@ class Drp
 	}
 	
 }
-
+//lazy controller 
 class Controller
 {
 	public var A:Float = 0;

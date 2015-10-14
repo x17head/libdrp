@@ -9,7 +9,7 @@ import libdrp.View.ViewProperties;
  * ...
  * @author Nate Edwards
  */
- 
+ //views take up a portion of the screen and contain entities
 class View
 {
 	public var viewProperties:ViewProperties;
@@ -64,7 +64,7 @@ class View
 		//find a the entity and return it...
 		for ( i in 0...entitys.length)
 			{
-				if (entitys[i].name == name)
+				if (entitys[i].getName() == name)
 				{
 					return entitys[i];
 				}
