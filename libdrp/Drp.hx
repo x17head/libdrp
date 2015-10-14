@@ -216,7 +216,7 @@ class Drp
 	{
 		var numberDrawn:Int = 0;
 		var currentZ:Int = 0;
-		while (numberDrawn < drawListCount)
+		while (numberDrawn != drawListCount)
 		{
 			for ( i in 0...drawListCount)
 			{
