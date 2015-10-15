@@ -25,8 +25,14 @@ class Entity
 	
 	private var view:View;
 		
-	public function new()
+	public function new(Name:String)
 	{	
+		name = Name;
+	}
+	//override this
+	public function setup()
+	{
+		
 	}
 	
 	//override this

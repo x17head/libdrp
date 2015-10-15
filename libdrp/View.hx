@@ -16,6 +16,8 @@ class View
 		
 	public var entitys : Array<Entity>;
 	
+	private var setup:Bool = false;
+	
 	public function new(RealX_in:Int, RealY_in:Int, RealWidth_in:Int, RealHeight_in:Int, VirtualWidth_in:Int, VirtualHeight_in:Int)
 	{		
 		
@@ -37,7 +39,7 @@ class View
 	}
 	
 	public function update(delta:Float):Void
-	{
+	{		
 		//update all Actors
 		for (Entity in entitys)
 		{
@@ -47,6 +49,14 @@ class View
 	
 	public function draw():Void
 	{
+		
+		if (!setup)
+		for (Entity in entitys)
+		{
+			Entity.setup();
+			setup = true;
+		}
+		
 		//render all
 		for (Entity in entitys)
 		{
