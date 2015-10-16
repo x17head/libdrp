@@ -12,58 +12,59 @@ import kha.audio1.Audio;
  */
 class Entity
 {
-	//not used in pools
 	private var name:String;
-	//only used in pools
-	private var active:Bool = false;
-	
-	//collision
 	private var x:Float = 0;
 	private var y:Float = 0;
 	private var width:Float = 0;
 	private var height:Float = 0;
-	
 	private var view:View;
-		
+	
 	public function new(Name:String)
 	{	
 		name = Name;
 	}
-	//override this
-	public function setup()
-	{
-		
-	}
 	
-	//override this
-	public function update(delta:Float)
-	{
-		
-	}
-	//override this
-	public function draw()
-	{
-		
-	}
-	//if the object is "poolable" override this
-	public function pool(input:Array<Dynamic>)
-	{
-		active = true;
-	}
+	public function setup(){};
+	
+	public function update(delta:Float){};
+
+	public function draw(){};
+
+	public function reset(){};
+	
 	//allows access to other entities and viewProperties
 	public function addView(view:View)
 	{
 		this.view = view;
 	}
 	
-	//de-activate a pool object
-	public function kill()
+	public function getName():String
 	{
-		active = false;
+		return name;
+	}
+	
+	public function getX():Float
+	{
+		return x;
+	}
+	
+	public function getY():Float
+	{
+		return y;
+	}
+	
+	public function getWidth():Float
+	{
+		return width;
+	}
+	
+	public function getHeight():Float
+	{
+		return height;
 	}
 	
 	//pass draw call to Drp draw stack
-	public function drawImage(image:Image,x:Float,y:Float,z:Float = 0,w:Float = 1,h:Float = 1,r:Float = 0)
+	public function drawImage(image:Image,x:Float,y:Float,?z:Float = 0,?w:Float = 1,?h:Float = 1,?r:Float = 0)
 	{
 		if (image != null)
 		{
@@ -97,7 +98,23 @@ class Entity
 		Audio.playMusic(mus);
 	}
 	
-	//<mouse stuff>
+	private function circleCollision(x1:Float, y1:Float, radius1:Float, x2:Float, y2:Float, radius2:Float):Bool
+	{
+		var dx = x2 - x1;
+		var dy = y2 - y1;
+		var radii = radius1 + radius2;
+		if ( ( dx * dx )  + ( dy * dy ) < radii * radii ){
+        return true;
+    }
+		else{return false;}
+	}
+	
+	//set current scene
+	
+	public function setScene(scene:String)
+	{
+		Drp.get().setScene(scene);
+	}
 	
 	//converts mouse from world coordinates to view coordinates
 	public function MouseX():Int
@@ -113,46 +130,43 @@ class Entity
 	{
 		return Drp.get().mouseButton[button];
 	}
-	//</mouse stuff>
 	
-	private function circleCollision(x1:Float, y1:Float, radius1:Float, x2:Float, y2:Float, radius2:Float):Bool
+	public function TouchX(finger:Int):Int
 	{
-		var dx = x2 - x1;
-		var dy = y2 - y1;
-		var radii = radius1 + radius2;
-		if ( ( dx * dx )  + ( dy * dy ) < radii * radii ){
-        return true;
-    }
-		else{return false;}
+		return Std.int( (Drp.get().touchX[finger] - view.viewProperties.RealX) / view.viewProperties.scaleX);
 	}
 	
-	public function getX():Float
+	public function TouchY(finger:Int):Int
 	{
-		return x;
+		return Std.int( (Drp.get().touchY[finger] - view.viewProperties.RealY) / view.viewProperties.scaleY);
+	}
+	public function TouchDown(finger:Int):Bool
+	{
+		return Drp.get().touch[finger];
 	}
 	
-	public function getY():Float
+	public function KeyboardKeyDown(key:String)
 	{
-		return y;
+		return Drp.get().keyboardKey(key);
 	}
 	
-	public function getWidth():Float
+	//pool stuff
+	private var active:Bool = false;
+		
+	public function pool(input:Array<Dynamic>)
 	{
-		return width;
-	}
-	
-	public function getHeight():Float
-	{
-		return height;
-	}
-	
-	public function getName():String
-	{
-		return name;
+		active = true;
 	}
 	
 	public function isActive():Bool
 	{
 		return active;
 	}
+	
+	//de-activate a pool object
+	public function kill()
+	{
+		active = false;
+	}
+	
 }

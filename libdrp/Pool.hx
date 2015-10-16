@@ -15,18 +15,27 @@ class Pool extends Entity
 	//the total is final
 	public function new(name:String,type:Class<Entity>,total:Int) 
 	{
-		super();
-		this.name = name;
+		super(name);
 		this.total = total;
 		this.type = type;
 		poolOfEntitys = new Array<Dynamic>();
 		for (i in 0...total) poolOfEntitys[i] = Type.createInstance(type,[]);
 	}
 	
+	override public function setup() 
+	{
+		for (Dynamic in poolOfEntitys) Dynamic.setup();
+	}
+	
 	override public function addView(view:View) 
 	{
 		super.addView(view);
 		for (i in 0...poolOfEntitys.length) poolOfEntitys[i].addView(view);
+	}
+	
+	override public function reset() 
+	{
+		for (i in 0...poolOfEntitys.length) poolOfEntitys[i].reset();
 	}
 	//find the first avaiable entity and activates it, if none are available it does nothing
 	public function add(input:Array<Dynamic>)

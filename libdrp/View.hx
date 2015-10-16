@@ -64,6 +64,14 @@ class View
 		}
 	}
 	
+	public function reset()
+	{
+		for (Entity in entitys)
+		{
+			 Entity.reset();
+		}
+	}
+	
 	public function addEntity(entity: Entity) { 
 		entitys.push(entity);
 		entity.addView(this);
