@@ -150,23 +150,4 @@ class Entity
 		return Drp.get().keyboardKey(key);
 	}
 	
-	//pool stuff
-	private var active:Bool = false;
-		
-	public function pool(input:Array<Dynamic>)
-	{
-		active = true;
-	}
-	
-	public function isActive():Bool
-	{
-		return active;
-	}
-	
-	//de-activate a pool object
-	public function kill()
-	{
-		active = false;
-	}
-	
 }
