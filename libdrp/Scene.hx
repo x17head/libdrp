@@ -10,6 +10,8 @@ import kha.Loader;
 //scene is a container class for one or more views
 class Scene
 {
+	var loaded = false;
+	
 	var views:Array<View>;
 	
 	public function new() 
@@ -24,22 +26,23 @@ class Scene
 	
 	public function update(delta:Float)
 	{
-		for (View in views) View.update(delta);
+		if(loaded)for (View in views) View.update(delta);
 	}
 	
 	public function draw()
 	{
-		for (View in views) View.draw();
+		if(loaded)for (View in views) View.draw();
 	}
 	
 	public function loadAssets(name:String)
 	{
 		Loader.the.loadRoom(name, setup);
 	}
-	//override this and create all your views and entitys here after the room has been loaded
+	
 	public function setup()
 	{
-		
+		for (View in views) View.setup();
+		loaded = true;
 	}
 	
 	public function unloadAssets()

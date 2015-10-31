@@ -33,6 +33,7 @@ class DrpGame extends Game
 	
 	override function init(): Void {
 		backbuffer = Image.createRenderTarget(width, height);
+		Drp.init();
 		setup();
 		Configuration.setScreen(this);
 	}
@@ -68,7 +69,7 @@ class DrpGame extends Game
 		
 		graphics.transformation = FastMatrix3.identity();
 		
-		Drp.get().drawOrdered(graphics);
+		Drp.drawOrdered(graphics);
 		
 		graphics.end(); 
 		 		 
@@ -81,12 +82,12 @@ class DrpGame extends Game
 	
 	function draw()
 	{
-		Drp.get().currentScene.draw();
+		Drp.currentScene.draw();
 	}
 	
 	override function update()
 	{
 		deltaUpdate();
-		Drp.get().currentScene.update(delta);
+		Drp.currentScene.update(delta);
 	}
 }

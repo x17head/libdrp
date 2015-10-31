@@ -15,13 +15,11 @@ class View
 	public var viewProperties:ViewProperties;
 		
 	public var entitys : Array<Entity>;
-	
-	private var setup:Bool = false;
-	
+		
 	public function new(RealX_in:Int, RealY_in:Int, RealWidth_in:Int, RealHeight_in:Int, VirtualWidth_in:Int, VirtualHeight_in:Int)
 	{		
 		
-		var viewPropertiesTEST:ViewProperties = { 
+		viewProperties = { 
 			RealX:RealX_in,
 			RealY:RealY_in,
 			RealWidth:RealWidth_in,
@@ -31,15 +29,13 @@ class View
 			scaleX:RealWidth_in/ VirtualWidth_in,
 			scaleY:RealHeight_in / VirtualHeight_in 
 			};
-			
-		viewProperties = viewPropertiesTEST;
 		
 		entitys = new Array<Entity>();
 		
 	}
 	
 	public function update(delta:Float):Void
-	{		
+	{
 		//update all Actors
 		for (Entity in entitys)
 		{
@@ -49,19 +45,16 @@ class View
 	
 	public function draw():Void
 	{
-		
-		if (!setup)
-		for (Entity in entitys)
-		{
-			Entity.setup();
-			setup = true;
-		}
-		
 		//render all
 		for (Entity in entitys)
 		{
 			 Entity.draw();
 		}
+	}
+	
+	public function setup()
+	{
+		for (Entity in entitys)Entity.setup();
 	}
 	
 	public function reset()
@@ -99,12 +92,12 @@ class View
 
 typedef ViewProperties =
 {
-	RealX:Int,
-	RealY:Int,
-	RealWidth:Int,
-	RealHeight:Int,
-	VirtualWidth:Int,
-	VirtualHeight:Int,
-	scaleX:Float,
-	scaleY:Float
+	var RealX:Int;
+	var RealY:Int;
+	var RealWidth:Int;
+	var RealHeight:Int;
+	var VirtualWidth:Int;
+	var VirtualHeight:Int;
+	var scaleX:Float;
+	var scaleY:Float;
 }

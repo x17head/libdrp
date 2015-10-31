@@ -2,6 +2,7 @@ package libdrp;
 
 import kha.graphics2.Graphics;
 import kha.Image;
+import libdrp.Drp.AtlasImage;
 import libdrp.View.ViewProperties;
 import kha.Loader;
 import kha.audio1.Audio;
@@ -64,11 +65,11 @@ class Entity
 	}
 	
 	//pass draw call to Drp draw stack
-	public function drawImage(image:Image,x:Float,y:Float,?z:Float = 0,?w:Float = 1,?h:Float = 1,?r:Float = 0)
+	public function drawImage(?image:Image = null,?name:String = null,x:Float,y:Float,?z:Float = 0,?w:Float = 1,?h:Float = 1,?r:Float = 0)
 	{
 		if (image != null)
 		{
-		Drp.get().drawCallOrdered(image,
+		Drp.drawCallOrdered(image,name,
 					view.viewProperties.RealX + (x * view.viewProperties.scaleX), 
 					view.viewProperties.RealY + (y * view.viewProperties.scaleY),
 					z,
@@ -76,7 +77,17 @@ class Entity
 					image.height * view.viewProperties.scaleY * h,
 					r);
 		}
-		
+		else
+		{
+		var temp:AtlasImage = Drp.Atlas.get(name);
+		Drp.drawCallOrdered(temp.image,name,
+					view.viewProperties.RealX + (x * view.viewProperties.scaleX), 
+					view.viewProperties.RealY + (y * view.viewProperties.scaleY),
+					z,
+					temp.width * view.viewProperties.scaleX * w, 
+					temp.height * view.viewProperties.scaleY * h,
+					r);
+		}
 	}
 	
 	//sound stuff
@@ -106,48 +117,48 @@ class Entity
 		if ( ( dx * dx )  + ( dy * dy ) < radii * radii ){
         return true;
     }
-		else{return false;}
+		else return false;
 	}
 	
 	//set current scene
 	
 	public function setScene(scene:String)
 	{
-		Drp.get().setScene(scene);
+		Drp.setScene(scene);
 	}
 	
 	//converts mouse from world coordinates to view coordinates
 	public function MouseX():Int
 	{
-		return Std.int( (Drp.get().mouseX - view.viewProperties.RealX) / view.viewProperties.scaleX);
+		return Std.int( (Drp.mouseX - view.viewProperties.RealX) / view.viewProperties.scaleX);
 	}
 	
 	public function MouseY():Int
 	{
-		return Std.int( (Drp.get().mouseY - view.viewProperties.RealY) / view.viewProperties.scaleY);
+		return Std.int( (Drp.mouseY - view.viewProperties.RealY) / view.viewProperties.scaleY);
 	}
 	public function MouseButton(button:Int):Bool
 	{
-		return Drp.get().mouseButton[button];
+		return Drp.mouseButton[button];
 	}
 	
 	public function TouchX(finger:Int):Int
 	{
-		return Std.int( (Drp.get().touchX[finger] - view.viewProperties.RealX) / view.viewProperties.scaleX);
+		return Std.int( (Drp.touchX[finger] - view.viewProperties.RealX) / view.viewProperties.scaleX);
 	}
 	
 	public function TouchY(finger:Int):Int
 	{
-		return Std.int( (Drp.get().touchY[finger] - view.viewProperties.RealY) / view.viewProperties.scaleY);
+		return Std.int( (Drp.touchY[finger] - view.viewProperties.RealY) / view.viewProperties.scaleY);
 	}
 	public function TouchDown(finger:Int):Bool
 	{
-		return Drp.get().touch[finger];
+		return Drp.touch[finger];
 	}
 	
 	public function KeyboardKeyDown(key:String)
 	{
-		return Drp.get().keyboardKey(key);
+		return Drp.keyboardKey(key);
 	}
 	
 }

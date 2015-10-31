@@ -1,6 +1,7 @@
 package libdrp;
 
 import haxe.ds.Vector;
+import haxe.xml.Fast;
 import kha.arrays.Float32Array;
 import kha.graphics2.Graphics;
 import kha.Image;
@@ -20,23 +21,20 @@ class Drp
 {
 	var scenes:Map<String,Scene>;
 	
-	public static var __instance:libdrp.Drp;
+	public static var instance:libdrp.Drp;
 	
 	//touch vars
-	private var __touch:Surface;
-	public var touch:Vector<Bool>;
-	public var touchX:Vector<Int>;
-	public var touchY:Vector<Int>;
+	public static var touch:Vector<Bool>;
+	public static var touchX:Vector<Int>;
+	public static var touchY:Vector<Int>;
 	
 	//keyboard var
 	public var keyboardMap:Map<String,String>;
-	public var __keyboard:Keyboard;
 	
 	//mouse vars
-	private var __mouse:kha.input.Mouse;
-	public var mouseX:Int = 0;
-	public var mouseY:Int = 0;
-	public var mouseButton:Vector<Bool>;
+	public static var mouseX:Int = 0;
+	public static var mouseY:Int = 0;
+	public static var mouseButton:Vector<Bool>;
 	//if anyone has a mouse with more then 99 buttons let me know, ill increase it...
 	private var maxMouseButtons:Int = 99;
 	
@@ -46,79 +44,98 @@ class Drp
 	
 	//draw z var
 	var drawListImage:Array<Image>;
+	var drawListName:Array<String>;
 	var drawListX:Array<Float>;
 	var drawListY:Array<Float>;
 	var drawListZ:Array<Float>;
 	var drawListW:Array<Float>;
 	var drawListH:Array<Float>;
 	var drawListR:Array<Float>;
+	
 	var drawListCount:Int = 0;
 	
-	public var currentScene:Scene;
+	//atlas
+	public static var Atlas:Map<String,AtlasImage>;
+	
+	public static var currentScene:Scene;
 	
 	public function new() 
 	{
-		scenes = new Map<String,Scene>();
-		
-		//setup touch
-		touch = new Vector(10);
-		touchX = new Vector(10);
-		touchY = new Vector(10);
-		__touch = Surface.get(0);
-		if (__touch != null)__touch.notify(touchDown, touchUp, touchMove);
-		//setup mouse
-		__mouse = kha.input.Mouse.get(0);
-		if (__mouse != null)
+		if (instance == null)
 		{
-			__mouse.notify(mouseDown, mouseUp, mouseMove, mouseWheel);
+			scenes = new Map<String,Scene>();
+		
+			//setup touch
+			touch = new Vector(10);
+			touchX = new Vector(10);
+			touchY = new Vector(10);
+		
+			//add #if so it doesnt crash if touch isnt supported.
+			
+			#if !sys_flash
+			Surface.get().notify(touchDown, touchUp, touchMove);
+			#end
+			
+			//setup mouse
+			kha.input.Mouse.get(0).notify(mouseDown, mouseUp, mouseMove, mouseWheel);
 			mouseButton = new Vector(maxMouseButtons);
 			for ( i in 0...mouseButton.length)
 			{
 				mouseButton[i] = false;
 			}
-		}
-		//setup gamepads
-		gamepad = new Vector(4);
-		controllers = new Vector(4);		
-		refreshControllers();
 		
-		//setup keyboard
-		keyboardMap = new Map();
-		__keyboard = Keyboard.get(0);
-		if (__keyboard != null)
-		{
-			__keyboard.notify(keyboardDown, keyboardUp);
-		}
+			//setup gamepads
+			gamepad = new Vector(4);
+			controllers = new Vector(4);		
+			refreshControllers();
 		
-		//setup draw lists
-		drawListImage = new Array<Image>();
-		drawListX = new Array<Float>();
-		drawListY = new Array<Float>();
-		drawListZ = new Array<Float>();
-		drawListW = new Array<Float>();
-		drawListH = new Array<Float>();
-		drawListR = new Array<Float>();
+			//setup keyboard
+			keyboardMap = new Map();
+			Keyboard.get(0).notify(keyboardDown, keyboardUp);
+		
+			//setup draw lists
+			drawListImage = new Array<Image>();
+			drawListName = new Array<String>();
+			drawListX = new Array<Float>();
+			drawListY = new Array<Float>();
+			drawListZ = new Array<Float>();
+			drawListW = new Array<Float>();
+			drawListH = new Array<Float>();
+			drawListR = new Array<Float>();
+			
+			Atlas = new Map<String,AtlasImage>();
+			
+			instance = this;
+		}
 	}
 	
 	//singlton stuff
-	public static function get():Drp
+	public static function init()
 	{
-		if (Drp.__instance == null)
-            Drp.__instance = new Drp();
-        return Drp.__instance;
+        instance = new Drp();
 	}
 	
 	//<scene stuff>
-	public function addScene(name:String,screen:Scene)
+	public static function addScene(name:String,screen:Scene)
+	{
+		instance._addScene(name, screen);
+	}
+	
+	public function _addScene(name:String,screen:Scene)
 	{
 		scenes.set(name, screen);
 	}
 	
-	public function setScene(name:String)
+	public static function setScene(name:String)
 	{
-		if (currentScene != null) currentScene.unloadAssets();
+		instance._setScene(name);
+	}
+	
+	public function _setScene(name:String)
+	{
 		currentScene = scenes.get(name);
 	}
+	
 	//</scene stuff>
 	
 	//<mouse stuff>
@@ -195,16 +212,73 @@ class Drp
 		keyboardMap.remove(string);
 	}
 	
-	public function keyboardKey(string:String)
+	public static function keyboardKey(string:String)
+	{
+		return instance._keyboardKey(string);
+	}
+	
+	public function _keyboardKey(string:String)
 	{
 		return keyboardMap.exists(string);
 	}
+	
+	//atlas stuff
+	
+	public static function loadAtlas(name:String)
+	{
+		instance._loadAtlas(name);
+	}
+	
+	public function _loadAtlas(name:String)
+	{
+		var xml = Xml.parse(Loader.the.getBlob(name).toString());
+		var fast:Fast = new Fast(xml.firstElement());
+		
+		for (item in fast.elements)
+		{
+			var temp = new Array<Float>();
+			var count = 0;
+			
+			for (temp2 in item.elements)
+			{
+				temp[count] = Std.parseFloat(temp2.innerData);
+				count++;
+			}
+			
+			Atlas.set(item.name, {
+			image:Loader.the.getImage(fast.name),
+			x:temp[0],
+			y:temp[1],
+			width:temp[2],
+			height:temp[3]
+			});
+		}
+		
+	}
+	
+	public static function unloadAtlas(name:String)
+	{
+		instance._unloadAtlas(name);
+	}
+	
+	public function _unloadAtlas(name:String)
+	{
+		
+	}
+	
 	//<batched draw call stuff>
 	
 	//adds draw call to the draw stack
-	public function drawCallOrdered(image:Image,x:Float,y:Float,z:Float,w:Float,h:Float,r:Float)
+	public static function drawCallOrdered(image:Image,name:String,x:Float,y:Float,z:Float,w:Float,h:Float,r:Float)
 	{
+		instance._drawCallOrdered(image, name, x, y, z, w, h, r);
+	}
+	
+	public function _drawCallOrdered(image:Image,name:String,x:Float,y:Float,z:Float,w:Float,h:Float,r:Float)
+	{
+		
 		drawListImage[drawListCount] = image;
+		drawListName[drawListCount] = name;
 		drawListX[drawListCount] = x;
 		drawListY[drawListCount] = y;
 		drawListZ[drawListCount] = z;
@@ -214,8 +288,13 @@ class Drp
 		drawListCount++;
 	}
 	
+	public static function drawOrdered(graphics:Graphics)
+	{
+		instance._drawOrdered(graphics);
+	}
+	
 	//executes draw calls in desired order
-	public function drawOrdered(graphics:Graphics)
+	public function _drawOrdered(graphics:Graphics)
 	{
 		var numberDrawn:Int = 0;
 		var currentZ:Int = 0;
@@ -229,13 +308,33 @@ class Drp
 						drawListX[i] + drawListW[i] / 2, 
 						drawListY[i] + drawListH[i] / 2
 						);
-
-					graphics.drawScaledImage(drawListImage[i], 
-					drawListX[i], 
-					drawListY[i], 
-					drawListW[i], 
-					drawListH[i]
-					);
+						
+					if (drawListName[i] == null)
+					{
+						graphics.drawScaledImage(drawListImage[i], 
+						drawListX[i], 
+						drawListY[i], 
+						drawListW[i], 
+						drawListH[i]
+						);
+					}
+					
+					if (drawListName[i] != null)
+					{
+						//do atlas magic here...
+						var tempImageAtlas:AtlasImage = Atlas.get(drawListName[i]);
+						
+						graphics.drawScaledSubImage(drawListImage[i],
+						tempImageAtlas.x,
+						tempImageAtlas.y,
+						tempImageAtlas.width,
+						tempImageAtlas.height,
+						drawListX[i], 
+						drawListY[i], 
+						drawListW[i], 
+						drawListH[i]
+						);
+					}
 						
 					if (drawListR[i] != 0)graphics.popTransformation();
 					numberDrawn++;
@@ -314,4 +413,13 @@ class Controller
 		if (buttonNum == 14) DPADLEFT = buttonValue;
 		if (buttonNum == 15) DPADRIGHT = buttonValue;
 	}
+}
+
+typedef AtlasImage = 
+{
+	var image:Image;
+	var x:Float;
+	var y:Float;
+	var width:Float;
+	var height:Float;
 }
