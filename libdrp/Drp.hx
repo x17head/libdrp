@@ -12,6 +12,8 @@ import kha.input.Mouse;
 import kha.input.Gamepad;
 import kha.input.Surface;
 import kha.Loader;
+import kha.audio1.Audio;
+import libdrp.View.ViewProperties;
 
 /**
  * ...
@@ -39,10 +41,10 @@ class Drp
 	private var maxMouseButtons:Int = 99;
 	
 	//gamepad vars
-	public var gamepad:Vector < Gamepad>;
-	public var controllers:Vector<Controller>;
+	public static var gamepad:Vector < Gamepad>;
+	public static var controllers:Vector<Controller>;
 	
-	//draw z var
+	//draw var
 	var drawListImage:Array<Image>;
 	var drawListName:Array<String>;
 	var drawListX:Array<Float>;
@@ -53,6 +55,8 @@ class Drp
 	var drawListR:Array<Float>;
 	
 	var drawListCount:Int = 0;
+	
+	var currentViewProp:ViewProperties;
 	
 	//atlas
 	public static var Atlas:Map<String,AtlasImage>;
@@ -222,6 +226,47 @@ class Drp
 		return keyboardMap.exists(string);
 	}
 	
+	//new input stuff
+	
+	public static function addControllerListener(axisListener:Int->Float->Void, buttonListener:Int->Float->Void,controllerNumber:Int)
+	{
+		#if sys_flash
+		return;
+		#end
+		
+		Gamepad.get(controllerNumber).notify(axisListener, buttonListener);
+	}
+	
+	//sound stuff
+	public static function playSound(sound:String)
+	{
+		instance._playSound(sound);
+	}
+	
+	public static function playMusic(music:String)
+	{
+		instance._playMusic(music);
+	}
+	
+	//sound stuff
+	public function _playSound(sound:String)
+	{
+		var snd = Loader.the.getSound(sound);
+		
+		if (snd == null) return;
+		
+		Audio.playSound(snd);
+	}
+	
+	public function _playMusic(music:String)
+	{
+		var mus = Loader.the.getMusic(music);
+		
+		if (mus == null) return;
+		
+		Audio.playMusic(mus);
+	}
+	
 	//atlas stuff
 	
 	public static function loadAtlas(name:String)
@@ -268,6 +313,55 @@ class Drp
 	
 	//<batched draw call stuff>
 	
+	public static function setCurrentViewProp(viewProp:ViewProperties)
+	{
+		instance._setCurrentViewProp(viewProp);
+	}
+	
+	public function _setCurrentViewProp(viewProp:ViewProperties)
+	{
+		currentViewProp = viewProp;
+	}
+	
+	public static function drawImage(?image:Image = null,?name:String = null,x:Float,y:Float,?z:Float = 0,?w:Float = 1,?h:Float = 1,?r:Float = 0)
+	{
+		instance._drawImage(image, name, x, y, z, w, h, r);
+	}
+		
+	public function _drawImage(image:Image,name:String,x:Float,y:Float,z:Float,w:Float,h:Float,r:Float)
+	{
+		if (image == null && name == null) return;
+		
+		if (image != null)
+		{
+		drawCallOrdered(image,name,
+					currentViewProp.RealX + (x * currentViewProp.scaleX), 
+					currentViewProp.RealY + (y * currentViewProp.scaleY),
+					z,
+					image.width * currentViewProp.scaleX * w, 
+					image.height * currentViewProp.scaleY * h,
+					r);
+		}
+		else
+		{
+		var atlasImage:AtlasImage = Drp.Atlas.get(name);
+		
+		if (atlasImage == null)
+		{
+				trace("no atlasImage by: " + name);
+				return;
+		}
+		
+		drawCallOrdered(atlasImage.image,name,
+					currentViewProp.RealX + (x * currentViewProp.scaleX), 
+					currentViewProp.RealY + (y * currentViewProp.scaleY),
+					z,
+					atlasImage.width * currentViewProp.scaleX * w, 
+					atlasImage.height * currentViewProp.scaleY * h,
+					r);
+		}
+	}
+	
 	//adds draw call to the draw stack
 	public static function drawCallOrdered(image:Image,name:String,x:Float,y:Float,z:Float,w:Float,h:Float,r:Float)
 	{
@@ -288,13 +382,13 @@ class Drp
 		drawListCount++;
 	}
 	
-	public static function drawOrdered(graphics:Graphics)
+	public static function drawFinal(graphics:Graphics)
 	{
-		instance._drawOrdered(graphics);
+		instance._drawFinal(graphics);
 	}
 	
 	//executes draw calls in desired order
-	public function _drawOrdered(graphics:Graphics)
+	public function _drawFinal(graphics:Graphics)
 	{
 		var numberDrawn:Int = 0;
 		var currentZ:Int = 0;

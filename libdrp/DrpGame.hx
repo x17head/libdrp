@@ -11,6 +11,7 @@ import kha.math.FastMatrix3;
 import kha.Scheduler;
 import kha.Configuration;
 import kha.LoadingScreen;
+import kha.ScreenRotation;
 import libdrp.Drp;
 
 /**
@@ -69,7 +70,7 @@ class DrpGame extends Game
 		
 		graphics.transformation = FastMatrix3.identity();
 		
-		Drp.drawOrdered(graphics);
+		Drp.drawFinal(graphics);
 		
 		graphics.end(); 
 		 		 

@@ -36,6 +36,8 @@ class View
 	
 	public function update(delta:Float):Void
 	{
+		//set viewprop
+		Drp.setCurrentViewProp(viewProperties);
 		//update all Actors
 		for (Entity in entitys)
 		{
@@ -45,6 +47,8 @@ class View
 	
 	public function draw():Void
 	{
+		//set viewprop
+		Drp.setCurrentViewProp(viewProperties);
 		//render all
 		for (Entity in entitys)
 		{
@@ -75,7 +79,7 @@ class View
 		//find a the entity and return it...
 		for ( i in 0...entitys.length)
 			{
-				if (entitys[i].getName() == name)
+				if (entitys[i].name == name)
 				{
 					return entitys[i];
 				}
